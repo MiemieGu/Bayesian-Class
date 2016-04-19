@@ -1,6 +1,7 @@
-mainDir <- "G:/R code_wd/Poisson-Norm/Lkeq"
-mainDir2 <-"G:/R output/Poisson-Norm/Lkeq"
-dataDir <-"G:/Simulated dataset/Poisson-Norm/Lkeq"
+mainDir <- "E:/R code_wd/Poisson-Norm/Lkeq/PoisMd"
+mainDir2 <-"E:/R output/Poisson-Norm/Lkeq/PoisMd"
+BugDir<-"E:/winbugs14"
+dataDir <-"E:/Simulated dataset/Poisson-Norm/Lkeq"
 
 setwd(mainDir)
 install.packages("R2WinBUGS")
@@ -46,11 +47,10 @@ poisunit<-function() {
   blkprecisn~dgamma(ablk,bblk)
   
   #######Compute fit Statistics#######
-  
-  
- 
-  
-  
+  for (i in 1:16){
+    BICobs[i]<-2*exp(eta[i])+2*loggam(y[i]+1)-2*y[i]*eta[i]
+  }
+  BIC<-sum(BICobs[1:16])+4*log(16)  
   
   }
 
@@ -66,16 +66,29 @@ Block = as.vector(Block)
 aunit=0.001;bunit=0.001;ablk=0.001;bblk=0.001;precisn=0.001;
 
 data=list("y","Trt","Block","aunit","bunit","ablk","bblk","precisn")
-parameters = c("trteff", "blksigma", "unitsigma")
+parameters = c("trteff", "blksigma", "unitsigma","BIC","DIC")
 inits = list(list( trteff = c(2,    1) , blkprecisn=1, unitprecisn=0.5) , 
              list( trteff = c(1.8, 1), blkprecisn=0.5,unitprecisn=0.25))
 fitpois <- bugs(data, inits, parameters, model.file = filename, 
-                      n.chains=2, n.iter = 50000, n.burnin = 10000, n.thin=1, DIC=TRUE, codaPkg = TRUE , debug=TRUE,
-                      program="WinBUGS", bugs.directory="G:/winbugs14",
+                      n.chains=2, n.iter = 50000, n.burnin = 10000, n.thin=1, DIC=TRUE, codaPkg = TRUE , debug=FALSE,
+                      program="WinBUGS", bugs.directory=BugDir,
                       working.directory=outputdirc)
 
 
 
+mcmc.out = file.path(outputdirc,"coda1.txt")
+index = file.path(outputdirc,"codaIndex.txt")
+mcmc = read.coda(output.file=mcmc.out, index.file=index)
+head(mcmc)
+
+effectiveSize(mcmc)[,c(1,5,6,8,9)])
+raftery.diag(mcmc, q=0.025, r=0.005, s=0.95, converge.eps=0.001)  # One chain only
+geweke.diag(mcmc, frac1=0.1, frac2=0.5)	# One chain only
+
+str(summary(mcmc))
+summary(mcmc)
+HPDinterval(mcmc, prob=0.95)
+plot(mcmc[,c(2,3,4)],trace = TRUE, density = TRUE, smooth=FALSE, auto.layout = TRUE)
 
 
 
