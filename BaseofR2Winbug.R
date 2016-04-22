@@ -26,8 +26,8 @@ subDir =toString(simudt)
 mixed=read.csv(file=paste(file.path(dataDir, subDir),".csv",sep=""), header=T)
 
 #set working directory#
-dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
-setwd(file.path(mainDir, subDir))
+#dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+#setwd(file.path(mainDir, subDir))
 
 #set output director#
 dir.create(file.path(mainDir2, "tmpoutpt"), showWarnings = FALSE)
@@ -128,7 +128,9 @@ DICls[simudt]=-2*(elpd-pDIC)
 BICdimxls[simudt]=-2*(elpd)+32*log(32)
 BICparals[simudt]=-2*(elpd)+pDIC*log(32)
 
-
 }
 
+#output result
+result=cbind(elpdls,ePostls,pDICls,DICls,BICdimxls,BICparals)
+write.csv(result,"result.csv")
 
