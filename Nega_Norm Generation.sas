@@ -29,6 +29,23 @@ end;
 end;
 run;
 
+%macro seperate(sets);
+%do i =1 %to &sets;
+	/*data poiunit.lkeq_&i;
+	set poiunit.lkeq;
+	if expt=&i;
+    run;*/
+data negbin.lkeq_&i;
+	set negbin.lkeq;
+	if expt=&i;
+    run;
+%end;
+%mend;
+%seperate(1000);
+
+
+
+
 libname poiunit 'G:\Simulated SAS dataset\Poisson-Norm\Lkeq';
 libname negbin'G:\Simulated SAS dataset\Nega-Norm\Lkeq';
 libname pearson 'G:\Simulated SAS dataset\Poisson-Norm\Pearson_Chi';
