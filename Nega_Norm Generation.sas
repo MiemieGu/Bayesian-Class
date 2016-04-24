@@ -1,5 +1,5 @@
-libname negbin 'G:\Disertation\SAS dataset\Nega-Norm';
-libname pearson2 'G:\Disertation\SAS dataset\Nega-Norm\Pearson_Chi';
+libname negbin 'E:\Project Dataset\Negbin\Lkeq';
+libname pearson2 'E:\Project Dataset\Negbin\Lkeq\Pearson_Chi';
 data nega.lkeq;
 seed=42850190;
  rate0=6;
@@ -29,6 +29,21 @@ end;
 end;
 run;
 
-proc sort data=nega.lkeq;
-by expt treatment block;
+libname poiunit 'G:\Simulated SAS dataset\Poisson-Norm\Lkeq';
+libname negbin'G:\Simulated SAS dataset\Nega-Norm\Lkeq';
+libname pearson 'G:\Simulated SAS dataset\Poisson-Norm\Pearson_Chi';
+libname estimt 'G:\Simulated SAS dataset\Poisson-Norm\Estimators';
+ods results off;
+ods html exclude all;
+%macro toexcel(dataset);
+%do i=1 %to &dataset;
+ods csv body="G:\Simulated dataset\Nega-Norm\Lkeq\&i..csv";
+proc print data=negbin.lkeq_&i;
+var expt block treatment count_ij;
 run;
+ods csv close;
+%end;
+%mend;
+%toexcel(1000);
+
+
