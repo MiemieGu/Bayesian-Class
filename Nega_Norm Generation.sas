@@ -31,10 +31,6 @@ run;
 
 %macro seperate(sets);
 %do i =1 %to &sets;
-	/*data poiunit.lkeq_&i;
-	set poiunit.lkeq;
-	if expt=&i;
-    run;*/
 data negbin.lkeq_&i;
 	set negbin.lkeq;
 	if expt=&i;
